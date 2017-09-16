@@ -11,13 +11,15 @@ from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
+from giftest import get_gif
+from wikitest import get_paragraphs_from_wiki
+
 
 class KeywordExtractor(object):
     """Wrapper around rake for reuse as library"""
 
     def  __init__(self):
         self.rake = RAKE.Rake('stop.txt')
-
 
     def get_keywords(self, sentence):
         """Gets a key phrase from a sentence"""
@@ -31,15 +33,29 @@ class KeywordExtractor(object):
     def paragraph_to_sentence(self, para):
         """Use if there are too many paragraphs"""
         LANGUAGE = "english"
-        SENTENCES_COUNT = 1
+        SENTENCES_COUNT = 2
         parser = PlaintextParser.from_string(para, Tokenizer(LANGUAGE))
         stemmer = Stemmer(LANGUAGE)
         summarizer = Summarizer(stemmer)
         summarizer.stop_words = get_stop_words(LANGUAGE)
 
-        for sentence in summarizer(parser.document, SENTENCES_COUNT):
-            return sentence
+        return list(summarizer(parser.document, SENTENCES_COUNT))
 
+
+def get_gifs_from_story(story_text, extractor):
+    if story_text.count('.') > 15:
+        paragraphs = story_text.split('\n')
+        sentences = map(extractor.paragraph_to_sentence, paragraphs)
+    else:
+        sentences = story_text.split('.')
+    kw_list = map(extractor.get_keywords, sentences)
+    gif_urls = map(get_gif, kw_list)
+    return list(gif_urls)
+
+
+def get_gifs_wiki(wiki_topic, extractor):
+    text = '\n'.join(get_paragraphs_from_wiki(wiki_topic))
+    return get_gifs_from_story(text, extractor)
 
 
 if __name__ == '__main__':

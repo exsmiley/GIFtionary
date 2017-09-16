@@ -2,3 +2,4 @@ tornado > 4.5
 python-rake
 sumy
 numpy
+bs4
