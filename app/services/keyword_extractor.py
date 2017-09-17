@@ -12,7 +12,7 @@ from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
 from giftest import get_gif
-from wikitest import get_paragraphs_from_wiki
+from wikitest import *
 
 
 class KeywordExtractor(object):
@@ -55,6 +55,11 @@ def get_gifs_from_story(story_text, extractor):
 
 def get_gifs_wiki(wiki_topic, extractor):
     text = '\n'.join(get_paragraphs_from_wiki(wiki_topic))
+    return get_gifs_from_story(text, extractor)
+
+
+def get_gifs_urban_dictionary(term, extractor):
+    text = '\n'.join(get_urban_dictionary(term))
     return get_gifs_from_story(text, extractor)
 
 

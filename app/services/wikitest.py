@@ -13,8 +13,6 @@ def get_wiki(topic):
 
 
 def get_paragraphs_from_wiki(topic):
-    # soup = BeautifulSoup(get_wiki(topic), 'html.parser')
-    # groups = map(unicode, soup.find_all('p'))
     text = get_wiki(topic)
     meta_info_index = text.find('<h2><span id="See_also">')
     initial_groups = text[:meta_info_index].split('<h2>')
@@ -26,3 +24,11 @@ def get_paragraphs_from_wiki(topic):
                 groups2.append(n)
     groups = map(lambda x: re.sub("<.*?>", " ", x).strip(), groups2)
     return map(lambda x: re.sub("\n", "", x), groups)
+
+
+def get_urban_dictionary(term):
+    term = term.lower().replace(' ', '+')
+    url = 'http://api.urbandictionary.com/v0/define?term={}'.format(term)
+    r = requests.get(url)
+    defs = map(lambda x: x['definition'], r.json()['list'])
+    return list(defs)
